@@ -16,7 +16,8 @@ function [] = computeGlobalStress(areaOfCells, cellInfo, edgeInfo)
 % ly        -> Component Y of edge length l
 
 
-N_uv = cell(2, 2);
+local_N_uv = cell(2, 2);
+global_N_uv = zeros(2, 2);
 % if u is 1, represents 'x' coordinate, otherwise -> 'y'
 for u = 1:2
     % if v is 1, represents 'x' coordinate, otherwise -> 'y'
@@ -55,9 +56,12 @@ for u = 1:2
             globalEdgeStress(numEdge) = calculateEdgeStress(edgeInfo, numEdge, 0, u, v);
         end
         
-        globalStress = (sum(cellStress) + sum(globalEdgeStress))/sum(areaOfCells);
+        validCells = logical(zeros(size(areaOfCells)));
+        validCells(cellStress~=0) = 1;
+        globalStress = (sum(cellStress) + sum(globalEdgeStress))/sum([areaOfCells(validCells).Area]);
         
-        N_uv(u, v) = {localStress};
+        local_N_uv(u, v) = {localStress};
+        global_N_uv(u, v) = globalStress;
     end
 end
 
