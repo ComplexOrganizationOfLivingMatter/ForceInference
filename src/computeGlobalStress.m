@@ -1,4 +1,4 @@
-function [] = computeGlobalStress(area, cellInfo, edgeInfo)
+function [] = computeGlobalStress(areaOfCells, cellInfo, edgeInfo)
 %COMPUTEGLOBALSTRESS Summary of this function goes here
 %   Detailed explanation goes here
 %   From equations Sugimura - 2013 
@@ -42,27 +42,21 @@ for u = 1:2
                     else
                         inverse = 0;
                     end
-                    tension = actualEdgeInfo.TensionValue(numEdge);
-                    if u == 1 && ~inverse
-                        l_u = actualEdgeInfo.vertex2_X(numEdge) - actualEdgeInfo.vertex1_X(numEdge);
-                    else
-                        l_u = actualEdgeInfo.vertex1_X(numEdge) - actualEdgeInfo.vertex2_X(numEdge);
-                    end
                     
-                    if v == 1 && ~inverse
-                        l_v = actualEdgeInfo.vertex2_Y(numEdge) - actualEdgeInfo.vertex1_Y(numEdge);
-                    else
-                        l_v = actualEdgeInfo.vertex1_Y(numEdge) - actualEdgeInfo.vertex2_Y(numEdge);
-                    end
-                    
-                    edgeLength = actualEdgeInfo.EdgeLength(numEdge);
-                    edgesStress(numEdge) = tension * ( l_u * l_v ) / edgeLength;
+                    edgesStress(numEdge) = calculateEdgeStress(actualEdgeInfo, numEdge, inverse, u, v);
                 end
-                cellStress = (-area(numCell).Area * cellInfo(numCell, 2) * Delta_uv );
+                cellStress(numCell) = -(areaOfCells(numCell).Area * cellInfo(numCell, 2) * Delta_uv );
                 %Global stress
-                localStress(numCell) =  (cellStress + sum(edgesStress)) / area(numCell).Area;
+                localStress(numCell) =  (cellStress(numCell) + sum(edgesStress)) / areaOfCells(numCell).Area;
             end
         end
+        
+        for numEdge = 1:size(edgeInfo, 1)
+            globalEdgeStress(numEdge) = calculateEdgeStress(edgeInfo, numEdge, 0, u, v);
+        end
+        
+        globalStress = (sum(cellStress) + sum(globalEdgeStress))/sum(areaOfCells);
+        
         N_uv(u, v) = {localStress};
     end
 end
