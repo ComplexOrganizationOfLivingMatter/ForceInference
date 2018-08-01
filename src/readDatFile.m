@@ -93,7 +93,7 @@ function [forceInferenceValue, edgeInfo] = readDatFile( fileName, correspondingI
     majorAxisOfCells = [cellsMorphology.MajorAxisLength];
     minorAxisOfCells = [cellsMorphology.MinorAxisLength];
     
-    angleOfCells = [cellsMorphology.Orientation];
+    angleOfCells = cos(deg2rad([cellsMorphology.Orientation]));
     
     validCells = false(size(areaOfCells, 1), 1);
     validCells(1:size(cellInfo, 1)) = (cellInfo(:, 5) ~= cellInfo(:, 6)) & isnan(cellInfo(:, 3)) == 0;

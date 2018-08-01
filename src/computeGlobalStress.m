@@ -46,9 +46,9 @@ for u = 1:2
                     
                     edgesStress(numEdge) = calculateEdgeStress(actualEdgeInfo, numEdge, inverse, u, v);
                 end
-                cellStress(numCell) = -(areaOfCells(numCell).Area * cellInfo(numCell, 2) * Delta_uv );
+                cellStress(numCell) = -(areaOfCells(numCell) * cellInfo(numCell, 2) * Delta_uv );
                 %Global stress
-                localStress(numCell) =  (cellStress(numCell) + sum(edgesStress)) / areaOfCells(numCell).Area;
+                localStress(numCell) =  (cellStress(numCell) + sum(edgesStress)) / areaOfCells(numCell);
             end
         end
         
@@ -58,17 +58,16 @@ for u = 1:2
         
 %         validCells = logical(zeros(size(areaOfCells)));
 %         validCells(cellStress~=0) = 1;
-        globalStress = (sum(cellStress) + sum(globalEdgeStress))/sum([areaOfCells.Area]);
+        globalStress = (sum(cellStress) + sum(globalEdgeStress))/sum([areaOfCells]);
         
         local_N_uv(u, v) = {localStress(validCells)};
         global_N_uv(u, v) = globalStress;
     end
 end
 
-eig(local_N_uv{u, v})
+
 %Calculate the eigenvectors of the global stress tensor
-
-
-
+for numCell = 1:size(localStress, 1)
+    eig(local_N_uv{1:2, 1:2})
 end
 
