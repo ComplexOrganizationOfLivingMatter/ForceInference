@@ -1,9 +1,9 @@
 
 addpath(genpath('src'))
 addpath(genpath('lib'))
-addpath('..\TubularModel\src\lib');
+addpath('..\Epithelia3D\InSilicoModels\TubularModel\src\lib');
 
-datFiles = dir('Sugimura_Results\ThirdRound\**\*.dat');
+datFiles = dir('results\Sugimura_Results\ThirdRound\**\*.dat');
 tifFiles = dir('data\2048x4096_200seeds\**\*.tif');
 
 frustaForceInference = cell(1, 4);
@@ -49,7 +49,6 @@ for numFile = 1:length(datFiles)
             voronoiForceInference{2} = vertcat(voronoiForceInference{2}, forceInferenceInfo);
             voronoiForceInference{4} = vertcat(voronoiForceInference{4}, edgeInfo);
         end
-        
     end
 end
 
