@@ -1,4 +1,4 @@
-function [] = computeGlobalStress(areaOfCells, cellInfo, edgeInfo)
+function [] = computeGlobalStress(areaOfCells, cellInfo, edgeInfo, validCells)
 %COMPUTEGLOBALSTRESS Summary of this function goes here
 %   Detailed explanation goes here
 %   From equations Sugimura - 2013 
@@ -34,7 +34,7 @@ for u = 1:2
         for numCell = 1:size(cellInfo, 1)
             actualEdgeInfo = edgeInfo(edgeInfo.ConnectingCell1 == numCell | edgeInfo.ConnectingCell2 == numCell, :);
 
-            if isempty(actualEdgeInfo) == 0
+            if isempty(actualEdgeInfo) == 0 && validCells(numCell)
                 edgesStress = zeros(size(actualEdgeInfo, 1), 1);
                 for numEdge = 1:size(actualEdgeInfo, 1)
                     %Checking if we have to inverse the vector
@@ -60,12 +60,12 @@ for u = 1:2
 %         validCells(cellStress~=0) = 1;
         globalStress = (sum(cellStress) + sum(globalEdgeStress))/sum([areaOfCells.Area]);
         
-        local_N_uv(u, v) = {localStress};
+        local_N_uv(u, v) = {localStress(validCells)};
         global_N_uv(u, v) = globalStress;
     end
 end
 
-disp('')
+eig(local_N_uv{u, v})
 %Calculate the eigenvectors of the global stress tensor
 
 

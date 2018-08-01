@@ -88,12 +88,17 @@ function [forceInferenceValue, edgeInfo] = readDatFile( fileName, correspondingI
          cellInfo(numCell, 6) = sideCells(numCell);
     end
     
-    areaOfCells = regionprops(imgLabelled, 'area');
+    cellsMorphology = regionprops(imgLabelled, 'all');
+    areaOfCells = [cellsMorphology.Area];
+    majorAxisOfCells = [cellsMorphology.MajorAxisLength];
+    minorAxisOfCells = [cellsMorphology.MinorAxisLength];
+    
+    angleOfCells = [cellsMorphology.Orientation];
     
     validCells = false(size(areaOfCells, 1), 1);
     validCells(1:size(cellInfo, 1)) = (cellInfo(:, 5) ~= cellInfo(:, 6)) & isnan(cellInfo(:, 3)) == 0;
     
-    computeGlobalStress(areaOfCells(validCells), cellInfo(validCells, :), edgeInfo)
+    computeGlobalStress(areaOfCells, cellInfo, edgeInfo, validCells);
     
     [correlation, pvalue] = corrcoef(cellInfo(:, 2:5), 'Rows', 'pairwise');
     forceInferenceValue = array2table(cellInfo, 'VariableNames', {'CellID', 'PressureValue', 'MeanTension', 'STDTension', 'NumEdgesOfTension', 'RealSides'});
