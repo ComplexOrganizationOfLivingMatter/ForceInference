@@ -68,8 +68,20 @@ function [] = computeGlobalStress(areaOfCells, cellInfo, edgeInfo, validCells)
     end
 
 
-%Calculate the eigenvectors of the global stress tensor
-for numCell = 1:size(localStress, 1)
-    eig(local_N_uv{1:2, 1:2})
+    %Calculate the eigenvectors of the global stress tensor
+    eigenvectors = cell(size(localStress(validCells)));
+    eigenvalues = cell(size(localStress(validCells)));
+    for numCell = 1:size(localStress(validCells), 1)
+        actualLocalStress = zeros(2, 2);
+        for u = 1:2
+            for v = 1:2
+                actualLocal_N = local_N_uv{u,v};
+                actualLocalStress(u, v) = actualLocal_N(numCell);
+            end
+        end
+        [eigenvectors{numCell}, eigenvalues{numCell}] = eig(actualLocalStress);
+    end
+    
+    disp('');
 end
 
