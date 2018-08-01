@@ -5,13 +5,13 @@ function [edgeStress] = calculateEdgeStress(actualEdgeInfo, numEdge, inverse, u,
     if u == 1 && ~inverse
         l_u = actualEdgeInfo.vertex2_X(numEdge) - actualEdgeInfo.vertex1_X(numEdge);
     else
-        l_u = actualEdgeInfo.vertex1_X(numEdge) - actualEdgeInfo.vertex2_X(numEdge);
+        l_u = actualEdgeInfo.vertex1_Y(numEdge) - actualEdgeInfo.vertex2_Y(numEdge);
     end
 
-    if v == 1 && ~inverse
+    if v == 2 && ~inverse
         l_v = actualEdgeInfo.vertex2_Y(numEdge) - actualEdgeInfo.vertex1_Y(numEdge);
     else
-        l_v = actualEdgeInfo.vertex1_Y(numEdge) - actualEdgeInfo.vertex2_Y(numEdge);
+        l_v = actualEdgeInfo.vertex1_X(numEdge) - actualEdgeInfo.vertex2_X(numEdge);
     end
 
     edgeLength = actualEdgeInfo.EdgeLength(numEdge);
