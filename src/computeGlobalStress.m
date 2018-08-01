@@ -56,9 +56,9 @@ for u = 1:2
             globalEdgeStress(numEdge) = calculateEdgeStress(edgeInfo, numEdge, 0, u, v);
         end
         
-        validCells = logical(zeros(size(areaOfCells)));
-        validCells(cellStress~=0) = 1;
-        globalStress = (sum(cellStress) + sum(globalEdgeStress))/sum([areaOfCells(validCells).Area]);
+%         validCells = logical(zeros(size(areaOfCells)));
+%         validCells(cellStress~=0) = 1;
+        globalStress = (sum(cellStress) + sum(globalEdgeStress))/sum([areaOfCells.Area]);
         
         local_N_uv(u, v) = {localStress};
         global_N_uv(u, v) = globalStress;

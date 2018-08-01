@@ -67,7 +67,7 @@ function [forceInferenceValue, edgeInfo] = readDatFile( fileName, correspondingI
                     edgeInfo(end, 7:8) = cellsOfTheEdge;
                 end
             else %Cell preassure
-                cellInfo(end+1, :) = [str2double(lineSplitted{3}), str2double(lineSplitted{4})];
+                cellInfo(end+1, :) = [str2double(lineSplitted{3})+1, str2double(lineSplitted{4})];
             end
         elseif edgesTensions == true
             edgesTensions = false;
@@ -79,6 +79,7 @@ function [forceInferenceValue, edgeInfo] = readDatFile( fileName, correspondingI
     
     fclose(fileID);
     
+    
     for numCell = 1:size(cellInfo, 1)
          actualTensionValues = edgeInfo.TensionValue(edgeInfo.ConnectingCell1 == numCell | edgeInfo.ConnectingCell2 == numCell);
          cellInfo(numCell, 3) = mean(actualTensionValues);
@@ -87,6 +88,12 @@ function [forceInferenceValue, edgeInfo] = readDatFile( fileName, correspondingI
          cellInfo(numCell, 6) = sideCells(numCell);
     end
     
+    areaOfCells = regionprops(imgLabelled, 'area');
+    
+    validCells = false(size(areaOfCells, 1), 1);
+    validCells(1:size(cellInfo, 1)) = (cellInfo(:, 5) ~= cellInfo(:, 6)) & isnan(cellInfo(:, 3)) == 0;
+    
+    computeGlobalStress(areaOfCells(validCells), cellInfo(validCells, :), edgeInfo)
     
     [correlation, pvalue] = corrcoef(cellInfo(:, 2:5), 'Rows', 'pairwise');
     forceInferenceValue = array2table(cellInfo, 'VariableNames', {'CellID', 'PressureValue', 'MeanTension', 'STDTension', 'NumEdgesOfTension', 'RealSides'});
