@@ -13,6 +13,9 @@ function [edgeStress] = calculateEdgeStress(actualEdgeInfo, numEdge, inverse, u,
     else
         l_v = actualEdgeInfo.vertex1_X(numEdge) - actualEdgeInfo.vertex2_X(numEdge);
     end
+    
+    %l_ij = [actualEdgeInfo.vertex1_Y
+    %l_ij = [l_u, l_v, 1];
 
     edgeLength = actualEdgeInfo.EdgeLength(numEdge);
     edgeStress = tension * ( l_u * l_v ) / edgeLength;
